@@ -11,7 +11,10 @@ window.addEventListener("DOMContentLoaded", () => {
             }
 
          })
-         .catch((error) => console.log(error))
+         .catch((error) => console.log(error));
+
+
+    
 
 } )
 
@@ -96,6 +99,7 @@ function showUserOnScreen(userObject)
 
   
     //creating comment button 
+
     const commentBtn = document.createElement("button");
     commentBtn.setAttribute("class","btn btn-danger");
     commentBtn.textContent = "Comment";
@@ -103,92 +107,84 @@ function showUserOnScreen(userObject)
 
     commentBtn.addEventListener("click", function(){
 
+        
         const newInput = document.createElement("input");
         const sendBtn = document.createElement("button");
 
         newInput.setAttribute('type', 'text');
-        newInput.setAttribute('name', 'comment');
-        newInput.setAttribute('id', 'comment');
+        newInput.setAttribute('class', 'comment');
+      
+        newInput.setAttribute('id', userObject.id);
 
         sendBtn.setAttribute("class","btn btn-primary");
         sendBtn.textContent = "Send";
 
-       newLi2.appendChild(newInput);
-       newLi2.appendChild(sendBtn);
+        const br = document.createElement("br");
+        newLi2.appendChild(br);
+       
+        newLi2.appendChild(newInput);
+       
+        const br1 = document.createElement("br");
+        newLi2.appendChild(br1);
+        
+        newLi2.appendChild(sendBtn);
+
+
+
+       var id = userObject.id;
+
+       axios.get(`http://localhost:3000/user/get-comments/${id}`)
+        .then((response) => {
+        //console.log(response.data);
+    
+        for(let i=0; i<response.data.allComments.length; i++){
+            showComment(response.data.allComments[i]);
+        }
+
+        })
+        .catch((error) => console.log(error))
     
         
 
        sendBtn.addEventListener("click", function(event){
 
-        const val = document.getElementById('comment').value;
+        const val = document.getElementById(userObject.id).value;
+        document.getElementById(userObject.id).value = '';
         console.log(val);
        
-        // var id = userObject.id;
+        var id = userObject.id;
+        console.log(id);
 
-        // axios.delete(`http://localhost:3000/user/delete-user/${id}`)
-        //             .then((response)=>{
+        const  obj = {
+                    comment: val
+                }
+
+        axios.post(`http://localhost:3000/user/add-comment/${id}`, obj)
+                    .then((response)=>{
         
-        //                 uoList.removeChild(newLi);
+                        console.log(11111111);
+                        
+                        console.log(response.data.newCommentDetail);
+                        showComment(response.data.newCommentDetail);
     
-        //             })
+                    })
         
-        //             .catch((error)=>console.log("ERROR"))           
+                    .catch((error)=>console.log(error));           
+
+    });
+
+    function showComment(obj) {
+    const commentH4 = document.createElement("h4");
+    
+    commentH4.innerHTML = "Anonymous: " + obj.comment;
+    
+    newLi2.appendChild(commentH4);
+    }
+          
 
     });
 
 
-
-
-       
-        // var id = userObject.id;
-
-        // axios.delete(`http://localhost:3000/user/delete-user/${id}`)
-        //             .then((response)=>{
-        
-        //                 uoList.removeChild(newLi);
-    
-        //             })
-        
-        //             .catch((error)=>console.log("ERROR"))           
-
-    });
-
-
   
-    // //creating edit button
-    // const editButton = document.createElement("input");
-    // editButton.type="button";
-    // editButton.value = "Edit";
-    // editButton.setAttribute("class","btn btn-primary");
-
-    // newLi.appendChild(editButton);
-  
-    // editButton.onclick = () => {
-
-    //    // uoList.removeChild(newLi);
-
-    //     var id = userObject._id;
-
-    //     axios.delete(`https://crudcrud.com/api/6c12b4a946304c9bacf36968dfb7177a/studentManager/${id}`)
-    //          .then((response)=>{
-
-    //             uoList.removeChild(newLi);
-
-    //             axios.get("https://crudcrud.com/api/6c12b4a946304c9bacf36968dfb7177a/studentManager")
-    //             .then((response) => {
-    //                 let length = response.data.length;
-    //                 document.getElementById("totalStudent").innerHTML = `All Students:${length}`;       
-
-    //             })
-    //             .catch((error) => console.log(error))
-
-    //          })
-    //          .catch((error)=>console.log("ERROR"))
-
-
-    //    document.getElementById("name").value=userObject.name;
-    //    document.getElementById("phone").value=userObject.phonenumber;
-    //    document.getElementById("address").value=userObject.address;   
-  
-    // } 
 }
+

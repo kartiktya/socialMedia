@@ -5,29 +5,33 @@ var cors = require('cors');
 
 const sequelize = require('./util/database.js');
 
+const Post = require('./models/post.js');
+const Comment = require('./models/comment.js');
+
 const app = express();
 
 app.use(cors());
 
 const postRoutes = require('./routes/post.js');
+const commentRoutes = require('./routes/comment.js');
 
 app.use(bodyParser.json({ extended: false }));
 
 app.use('/user', postRoutes);
+app.use('/user',commentRoutes);
 
-// app.post('/add-user', (req, res, next) => {
-//     res.send('hello1');
-// });
-
-// app.get('/add-user', (req, res, next) => {
-//     res.send('hello2');
-// });
 
 app.use('/', (req, res, next) => {
-    res.send('hello');
+    //res.send('hello');
 });
 
-sequelize.sync()
+Post.hasMany(Comment);
+
+
+
+sequelize
+//.sync({ force: true})
+.sync()
 .then()
 .catch(err => console.log(err));
 
